@@ -1,0 +1,22 @@
+{
+	"name": "adt/query-object-data-source",
+	"description": "Ublaboo Datagrid data source bindings for Kdyby Doctrine query objects.",
+	"type": "library",
+	"license": [
+		"MIT",
+		"BSD-3-Clause",
+		"GPL-2.0",
+		"GPL-3.0"
+	],
+	"require-dev": {
+		"kdyby/doctrine": "^3.1",
+		"ublaboo/datagrid": "^5.0",
+		"nette/utils": "^2.4",
+		"nette/di": "^2.4"
+	},
+	"autoload": {
+		"psr-4": {
+			"ADT\\QueryObjectDataSource\\": "src/"
+		}
+	}
+}
