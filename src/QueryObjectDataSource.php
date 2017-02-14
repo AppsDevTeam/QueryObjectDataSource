@@ -2,27 +2,16 @@
 
 namespace ADT\QueryObjectDataSource;
 
-interface IQueryObjectDataSourceFactory {
-
-	/** @return QueryObjectDataSource */
-	function create(\Kdyby\Doctrine\QueryObject $queryObject, $primaryKey);
-
-}
-
-
 class QueryObjectDataSource extends \Nette\Object implements \Ublaboo\DataGrid\DataSource\IDataSource {
-
-	/** @var \Kdyby\Doctrine\EntityManager */
-	protected $em;
 
 	/** @var \Kdyby\Doctrine\ResultSet */
 	protected $resultSet;
 
+	/** @var \Kdyby\Doctrine\EntityRepository */
+	protected $repo;
+
 	/** @var \Kdyby\Doctrine\QueryObject */
 	protected $queryObject;
-
-	/** @var string */
-	protected $primaryKey;
 
 	/** @var callable */
 	public $filterCallback;
@@ -35,13 +24,11 @@ class QueryObjectDataSource extends \Nette\Object implements \Ublaboo\DataGrid\D
 
 	/**
 	 * @param \Kdyby\Doctrine\QueryObject $queryObject
-	 * @param string $primaryKey
-	 * @param \Kdyby\Doctrine\EntityManager $em
+	 * @param \Kdyby\Doctrine\EntityRepository $repo
 	 */
-	public function __construct(\Kdyby\Doctrine\QueryObject $queryObject, $primaryKey, \Kdyby\Doctrine\EntityManager $em) {
+	public function __construct(\Kdyby\Doctrine\QueryObject $queryObject, \Kdyby\Doctrine\EntityRepository $repo) {
 		$this->queryObject = $queryObject;
-		$this->primaryKey = $primaryKey;
-		$this->em = $em;
+		$this->repo = $repo;
 	}
 
 	/**
@@ -73,7 +60,7 @@ class QueryObjectDataSource extends \Nette\Object implements \Ublaboo\DataGrid\D
 
 	protected function getResultSet() {
 		if (!$this->resultSet) {
-			$this->resultSet = $this->em->getRepository($this->queryObject->getEntity())
+			$this->resultSet = $this->repo
 				->fetch($this->queryObject);
 		}
 
@@ -85,7 +72,7 @@ class QueryObjectDataSource extends \Nette\Object implements \Ublaboo\DataGrid\D
 	 * @return int
 	 */
 	public function getCount() {
-		return $this->em->getRepository($this->queryObject->getEntity())
+		return $this->repo
 			->fetch($this->queryObject)
 			->getTotalCount();
 	}
