@@ -148,4 +148,47 @@ class QueryObjectDataSource extends \Nette\Object implements \Ublaboo\DataGrid\D
 		return $this;
 	}
 
+	/**
+	 * @param FilterDateRange $filter
+	 * @return array
+	 */
+	public static function parseFilterDateRange(FilterDateRange $filter) {
+
+		$conditions = $filter->getCondition();
+
+		$value_from = $conditions[$filter->getColumn()]['from'];
+		$value_to = $conditions[$filter->getColumn()]['to'];
+
+		if ($value_from) {
+			$date_from = DateTimeHelper::tryConvertToDate($value_from, [$filter->getPhpFormat()]);
+			$date_from->setTime(0, 0, 0);
+		} else {
+			$date_from = NULL;
+		}
+
+		if ($value_to) {
+			$date_to = DateTimeHelper::tryConvertToDate($value_to, [$filter->getPhpFormat()]);
+			$date_to->setTime(23, 59, 59);
+		} else {
+			$date_to = NULL;
+		}
+
+		return [
+			'from' => $date_from,
+			'to' => $date_to,
+		];
+	}
+
+	/**
+	 * @param FilterDate $filter
+	 * @return \DateTime|null
+	 */
+	public static function parseFilterDate(FilterDate $filter) {
+		foreach ($filter->getCondition() as $column => $value) {
+			$date = DateTimeHelper::tryConvertToDateTime($value, [$filter->getPhpFormat()]);
+			$date->setTime(0, 0, 0);
+			return $date;
+		}
+	}
+
 }

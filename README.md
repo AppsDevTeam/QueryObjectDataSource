@@ -38,8 +38,17 @@ $dataSource = $this->queryObjectDataSourceFactory->create($qo, "id")
 		}
 	})
 	->setFilterCallback(function ($queryObject, array $filter) {
-		foreach ($filter as $field => $value) {
-			$queryObject->{'by' . $field}($value);
+		foreach ($filter as $field => $value) {			
+			switch ($column) {
+				case 'dateRange':
+					$queryObject->byDateRange(QueryObjectDataSource::parseFilterDateRange($fieldSet));
+					break;
+				case 'date':
+					$queryObject->byDate(QueryObjectDataSource::parseFilterDate($fieldSet));
+					break;
+				default:
+					$queryObject->{'by' . $field}($value);
+			}
 		}
 	});
 
