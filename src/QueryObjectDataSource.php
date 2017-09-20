@@ -2,6 +2,10 @@
 
 namespace ADT\QueryObjectDataSource;
 
+use Ublaboo\DataGrid\Filter\FilterDate;
+use Ublaboo\DataGrid\Filter\FilterDateRange;
+use Ublaboo\DataGrid\Utils\DateTimeHelper;
+
 class QueryObjectDataSource extends \Nette\Object implements \Ublaboo\DataGrid\DataSource\IDataSource {
 
 	/** @var \Kdyby\Doctrine\ResultSet */
