@@ -6,8 +6,10 @@ use Ublaboo\DataGrid\Filter\FilterDate;
 use Ublaboo\DataGrid\Filter\FilterDateRange;
 use Ublaboo\DataGrid\Utils\DateTimeHelper;
 
-class QueryObjectDataSource extends \Nette\Object implements \Ublaboo\DataGrid\DataSource\IDataSource {
+class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource {
 
+	use \Nette\SmartObject;
+	
 	/** @var \Kdyby\Doctrine\ResultSet */
 	protected $resultSet;
 
