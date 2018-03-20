@@ -108,7 +108,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 		}
 
 		if (is_callable($this->filterCallback)) {
-			$this->filterCallback($this->queryObject, $filters);
+			call_user_func_array($this->filterCallback, [$this->queryObject, $filters]);
 		}
 
 		return $this;
@@ -122,7 +122,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	public function filterOne(array $filter) {
 
 		if (is_callable($this->filterOneCallback)) {
-			$this->filterOneCallback($this->queryObject, $filter);
+			call_user_func_array($this->filterOneCallback, [$this->queryObject, $filter]);
 		}
 
 		return $this;
@@ -148,7 +148,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	public function sort(\Ublaboo\DataGrid\Utils\Sorting $sorting) {
 
 		if (is_callable($this->sortCallback)) {
-			$this->sortCallback($this->queryObject, $sorting);
+			call_user_func_array($this->sortCallback, [$this->queryObject, $sorting]);
 		}
 
 		return $this;
