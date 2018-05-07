@@ -54,3 +54,21 @@ $dataSource = $this->queryObjectDataSourceFactory->create($qo, "id")
 
 $grid->setDataSource($queryObjectDataSource);
 ```
+
+You can use per column condition and sortable callbacks as well:
+```php
+$datagrid->addColumnText('email', 'entity.user.email')
+	->setSortable()
+	->setSortableCallback(function (UserQueryObject $userQuery, $email) {
+		$userQuery->orderByEmail($email);
+	})
+	->setFilterText()
+	->setCondition(function (UserQueryObject $userQuery, $email) {
+		$userQuery->searchInEmail($email);
+	});
+```
+
+If you implement \ADT\QueryObjectDataSource\IQueryObject on your QueryObject,
+those methods will be called when there is no per column callbacks provided.
+Function `searchIn($column, $value)` will be called on text fields and 
+`equalIn($column, $value)` on other column types.

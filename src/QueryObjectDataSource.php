@@ -4,6 +4,7 @@ namespace ADT\QueryObjectDataSource;
 
 use Ublaboo\DataGrid\Filter\FilterDate;
 use Ublaboo\DataGrid\Filter\FilterDateRange;
+use Ublaboo\DataGrid\Filter\FilterText;
 use Ublaboo\DataGrid\Utils\DateTimeHelper;
 
 class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource {
@@ -16,7 +17,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	/** @var \Kdyby\Doctrine\EntityRepository */
 	protected $repo;
 
-	/** @var \Kdyby\Doctrine\QueryObject */
+	/** @var \Kdyby\Doctrine\QueryObject|IQueryObject */
 	protected $queryObject;
 
 	/** @var callable */
@@ -103,6 +104,14 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 					\Nette\Utils\Callback::invokeArgs(
 						$filter->getConditionCallback(), [ $this->queryObject, $filter->getValue() ]
 					);
+				} else {
+					if ($this->queryObject instanceof IQueryObject) {
+						if ($filter instanceof FilterText) {
+							$this->queryObject->searchIn($filter->getKey(), $filter->getValue());
+						} else {
+							$this->queryObject->equalIn($filter->getKey(), $filter->getValue());
+						}
+					}
 				}
 			}
 		}
@@ -147,6 +156,24 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 */
 	public function sort(\Ublaboo\DataGrid\Utils\Sorting $sorting) {
 
+		if (is_callable($sorting->getSortCallback())) {
+			call_user_func(
+				$sorting->getSortCallback(),
+				$this->queryObject,
+				array_values($sorting->getSort())[0]
+			);
+			
+		} else {
+			
+			$sort = $sorting->getSort();
+	
+			if (!empty($sort) && ($this->queryObject instanceof IQueryObject)) {
+				foreach ($sort as $column => $order) {
+					$this->queryObject->orderBy($column, $order);
+				}
+			}
+		} 
+		
 		if (is_callable($this->sortCallback)) {
 			call_user_func_array($this->sortCallback, [$this->queryObject, $sorting]);
 		}
