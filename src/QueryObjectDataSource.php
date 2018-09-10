@@ -164,7 +164,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 		};
 
 		if (is_callable($this->limitCallback)) {
-			$this->limitCallback($offset, $limit, $defaultCallback);
+			call_user_func_array($this->limitCallback, [$offset, $limit, $defaultCallback]);
 
 		} else {
 			$defaultCallback();
