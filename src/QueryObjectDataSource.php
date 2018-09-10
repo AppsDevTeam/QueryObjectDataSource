@@ -29,6 +29,9 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	/** @var callable */
 	public $sortCallback;
 
+	/** @var callable */
+	public $limitCallback;
+
 	/**
 	 * @param \Kdyby\Doctrine\QueryObject $queryObject
 	 * @param \Kdyby\Doctrine\EntityRepository $repo
@@ -62,6 +65,18 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 */
 	public function setSortCallback($callback) {
 		$this->sortCallback = $callback;
+		return $this;
+	}
+
+	/**
+	 * Pro nastavení limitu lze specifikovat callback $callback. Pokud není zadán, je použit defaultní callback $defaultCallback.
+	 * Callback $callback dostane mezi parametry i $defaultCallback, aby ho mohl případně zavolat.
+	 *
+	 * @param callable $callback Dostane parametry $offset, $limit, $defaultCallback
+	 * @return self
+	 */
+	public function setLimitCallback($callback) {
+		$this->limitCallback = $callback;
 		return $this;
 	}
 
@@ -144,7 +159,16 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * @return static
 	 */
 	public function limit($offset, $limit) {
-		$this->getResultSet()->applyPaging($offset, $limit);
+		$defaultCallback = function () use ($offset, $limit) {
+			$this->getResultSet()->applyPaging($offset, $limit);
+		};
+
+		if (is_callable($this->limitCallback)) {
+			$this->limitCallback($offset, $limit, $defaultCallback);
+
+		} else {
+			$defaultCallback();
+		}
 
 		return $this;
 	}

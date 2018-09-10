@@ -50,6 +50,11 @@ $dataSource = $this->queryObjectDataSourceFactory->create($qo, "id")
 					$queryObject->{'by' . $field}($value);
 			}
 		}
+	})
+	->setLimitCallback(function ($offset, $limit, $defaultCallback) use ($query, $itemRepository) {
+		// This callback is not necessary, but you can do your stuff with $offset and $limit here.
+
+		$defaultCallback();	// Run the default action
 	});
 
 $grid->setDataSource($queryObjectDataSource);
