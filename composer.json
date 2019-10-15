@@ -8,6 +8,9 @@
 		"GPL-2.0",
 		"GPL-3.0"
 	],
+	"require": {
+		"php": ">=7.1"
+	},
 	"require-dev": {
 		"kdyby/doctrine": "^3.1 || ~4.0",
 		"ublaboo/datagrid": "^5.0 || ~6.0",

@@ -6,8 +6,9 @@ use Ublaboo\DataGrid\Filter\FilterDate;
 use Ublaboo\DataGrid\Filter\FilterDateRange;
 use Ublaboo\DataGrid\Filter\FilterText;
 use Ublaboo\DataGrid\Utils\DateTimeHelper;
+use Ublaboo\DataGrid\DataSource\IDataSource;
 
-class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource {
+class QueryObjectDataSource implements IDataSource {
 
 	use \Nette\SmartObject;
 	
@@ -93,7 +94,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * Get count of data
 	 * @return int
 	 */
-	public function getCount() {
+	public function getCount(): int {
 		return $this->repo
 			->fetch($this->queryObject)
 			->getTotalCount();
@@ -103,7 +104,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * Get the data
 	 * @return array
 	 */
-	public function getData() {
+	public function getData(): array {
 		return $this->getResultSet()->toArray();
 	}
 
@@ -112,7 +113,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * @param array $filters
 	 * @return static
 	 */
-	public function filter(array $filters) {
+	public function filter(array $filters): void {
 		foreach ($filters as $filter) {
 			if ($filter->isValueSet()) {
 				if ($filter->hasConditionCallback()) {
@@ -143,7 +144,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * @param array $filter
 	 * @return static
 	 */
-	public function filterOne(array $filter) {
+	public function filterOne(array $filter): IDateSource {
 
 		if (is_callable($this->filterOneCallback)) {
 			call_user_func_array($this->filterOneCallback, [$this->queryObject, $filter]);
@@ -158,7 +159,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * @param int $limit
 	 * @return static
 	 */
-	public function limit($offset, $limit) {
+	public function limit($offset, $limit): IDataSource {
 		$defaultCallback = function () use ($offset, $limit) {
 			$this->getResultSet()->applyPaging($offset, $limit);
 		};
@@ -178,7 +179,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * @param \Ublaboo\DataGrid\Utils\Sorting $sorting
 	 * @return static
 	 */
-	public function sort(\Ublaboo\DataGrid\Utils\Sorting $sorting) {
+	public function sort(\Ublaboo\DataGrid\Utils\Sorting $sorting): IDataSource {
 
 		if (is_callable($sorting->getSortCallback())) {
 			call_user_func(
