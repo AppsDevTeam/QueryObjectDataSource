@@ -135,8 +135,6 @@ class QueryObjectDataSource implements IDataSource {
 		if (is_callable($this->filterCallback)) {
 			call_user_func_array($this->filterCallback, [$this->queryObject, $filters]);
 		}
-
-		return $this;
 	}
 
 	/**
