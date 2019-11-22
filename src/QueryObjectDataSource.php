@@ -142,7 +142,7 @@ class QueryObjectDataSource implements IDataSource {
 	 * @param array $filter
 	 * @return static
 	 */
-	public function filterOne(array $filter): IDateSource {
+	public function filterOne(array $filter): IDataSource {
 
 		if (is_callable($this->filterOneCallback)) {
 			call_user_func_array($this->filterOneCallback, [$this->queryObject, $filter]);
