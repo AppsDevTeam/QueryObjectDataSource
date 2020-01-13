@@ -148,4 +148,8 @@ class QueryObjectDataSource extends \Nette\Object implements \Ublaboo\DataGrid\D
 		return $this;
 	}
 
+	public function getQueryObject() {
+		return $this->queryObject;
+	}
+
 }
