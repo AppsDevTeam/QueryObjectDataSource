@@ -247,4 +247,8 @@ class QueryObjectDataSource implements IDataSource {
 		}
 	}
 
+	public function getQueryObject() {
+		return $this->queryObject;
+	}
+
 }
