@@ -33,6 +33,9 @@ class QueryObjectDataSource implements IDataSource {
 	/** @var callable */
 	public $limitCallback;
 
+	/** @var array */
+	private $data;
+
 	/**
 	 * @param \Kdyby\Doctrine\QueryObject $queryObject
 	 * @param \Kdyby\Doctrine\EntityRepository $repo
@@ -105,7 +108,19 @@ class QueryObjectDataSource implements IDataSource {
 	 * @return array
 	 */
 	public function getData(): array {
+		if ($this->data) {
+			return $this->data;
+		}
 		return $this->getResultSet()->toArray();
+	}
+
+	/**
+	 * Set the data
+	 * @return $this
+	 */
+	public function setData($data) {
+		$this->data = $data;
+		return $this;
 	}
 
 	/**
