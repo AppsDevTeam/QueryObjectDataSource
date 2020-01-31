@@ -131,7 +131,7 @@ class QueryObjectDataSource implements IDataSource {
 	public function filter(array $filters): void {
 		foreach ($filters as $filter) {
 			if ($filter->isValueSet()) {
-				if ($filter->hasConditionCallback()) {
+				if ($filter->getConditionCallback()) {
 					\Nette\Utils\Callback::invokeArgs(
 						$filter->getConditionCallback(), [ $this->queryObject, $filter->getValue() ]
 					);
