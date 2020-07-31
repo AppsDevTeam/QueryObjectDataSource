@@ -248,4 +248,8 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 		}
 	}
 
+	public function getQueryObject() {
+		return $this->queryObject;
+	}
+
 }
