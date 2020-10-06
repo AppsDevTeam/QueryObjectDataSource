@@ -132,9 +132,7 @@ class QueryObjectDataSource implements IDataSource {
 		foreach ($filters as $filter) {
 			if ($filter->isValueSet()) {
 				if ($filter->getConditionCallback()) {
-					\Nette\Utils\Callback::invokeArgs(
-						$filter->getConditionCallback(), [ $this->queryObject, $filter->getValue() ]
-					);
+					call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
 				} else {
 					if ($this->queryObject instanceof IQueryObject) {
 						if ($filter instanceof FilterText) {
