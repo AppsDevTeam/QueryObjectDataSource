@@ -6,8 +6,9 @@ use Ublaboo\DataGrid\Filter\FilterDate;
 use Ublaboo\DataGrid\Filter\FilterDateRange;
 use Ublaboo\DataGrid\Filter\FilterText;
 use Ublaboo\DataGrid\Utils\DateTimeHelper;
+use Ublaboo\DataGrid\DataSource\IDataSource;
 
-class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource {
+class QueryObjectDataSource implements IDataSource {
 
 	use \Nette\SmartObject;
 	
@@ -31,6 +32,9 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 
 	/** @var callable */
 	public $limitCallback;
+
+	/** @var array */
+	private $data;
 
 	/**
 	 * @param \Kdyby\Doctrine\QueryObject $queryObject
@@ -93,7 +97,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * Get count of data
 	 * @return int
 	 */
-	public function getCount() {
+	public function getCount(): int {
 		return $this->repo
 			->fetch($this->queryObject)
 			->getTotalCount();
@@ -103,8 +107,20 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * Get the data
 	 * @return array
 	 */
-	public function getData() {
+	public function getData(): array {
+		if ($this->data) {
+			return $this->data;
+		}
 		return $this->getResultSet()->toArray();
+	}
+
+	/**
+	 * Set the data
+	 * @return $this
+	 */
+	public function setData($data) {
+		$this->data = $data;
+		return $this;
 	}
 
 	/**
@@ -112,13 +128,11 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * @param array $filters
 	 * @return static
 	 */
-	public function filter(array $filters) {
+	public function filter(array $filters): void {
 		foreach ($filters as $filter) {
 			if ($filter->isValueSet()) {
-				if ($filter->hasConditionCallback()) {
-					\Nette\Utils\Callback::invokeArgs(
-						$filter->getConditionCallback(), [ $this->queryObject, $filter->getValue() ]
-					);
+				if ($filter->getConditionCallback()) {
+					call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
 				} else {
 					if ($this->queryObject instanceof IQueryObject) {
 						if ($filter instanceof FilterText) {
@@ -134,8 +148,6 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 		if (is_callable($this->filterCallback)) {
 			call_user_func_array($this->filterCallback, [$this->queryObject, $filters]);
 		}
-
-		return $this;
 	}
 
 	/**
@@ -143,7 +155,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * @param array $filter
 	 * @return static
 	 */
-	public function filterOne(array $filter) {
+	public function filterOne(array $filter): IDataSource {
 
 		if (is_callable($this->filterOneCallback)) {
 			call_user_func_array($this->filterOneCallback, [$this->queryObject, $filter]);
@@ -158,7 +170,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * @param int $limit
 	 * @return static
 	 */
-	public function limit($offset, $limit) {
+	public function limit($offset, $limit): IDataSource {
 		$defaultCallback = function () use ($offset, $limit) {
 			$this->getResultSet()->applyPaging($offset, $limit);
 		};
@@ -178,7 +190,7 @@ class QueryObjectDataSource implements \Ublaboo\DataGrid\DataSource\IDataSource 
 	 * @param \Ublaboo\DataGrid\Utils\Sorting $sorting
 	 * @return static
 	 */
-	public function sort(\Ublaboo\DataGrid\Utils\Sorting $sorting) {
+	public function sort(\Ublaboo\DataGrid\Utils\Sorting $sorting): IDataSource {
 
 		if (is_callable($sorting->getSortCallback())) {
 			call_user_func(
