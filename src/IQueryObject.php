@@ -4,11 +4,9 @@ namespace ADT\QueryObjectDataSource;
 
 interface IQueryObject
 {
-
-	function orderBy($column, $value);
+	function orderBy(string $column, string $order = 'ASC');
 	
-	function searchIn($column, $value);
+	function searchIn($column, $value, bool $strict = false);
 	
-	function equalIn($column, $value);
-	
+	function getEntityManager();
 }
