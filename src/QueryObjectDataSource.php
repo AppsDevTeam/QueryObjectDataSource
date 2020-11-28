@@ -37,12 +37,19 @@ class QueryObjectDataSource implements IDataSource {
 	private $data;
 
 	/**
+	 * QueryObjectDataSource constructor.
 	 * @param \Kdyby\Doctrine\QueryObject $queryObject
-	 * @param \Kdyby\Doctrine\EntityRepository $repo
+	 * @param \Kdyby\Doctrine\EntityRepository|null $repo
+	 * @throws \Exception
 	 */
-	public function __construct(\Kdyby\Doctrine\QueryObject $queryObject, \Kdyby\Doctrine\EntityRepository $repo) {
+	public function __construct(\Kdyby\Doctrine\QueryObject $queryObject, \Kdyby\Doctrine\EntityRepository $repo = null)
+	{
+		if (!$repo && (!$queryObject instanceof IQueryObject)) {
+			throw new \Exception('"repo" must be set or "queryObject" has to implement IQueryObject interface.');
+		}
+
 		$this->queryObject = $queryObject;
-		$this->repo = $repo;
+		$this->repo = $repo ?: $queryObject->getEntityManager();
 	}
 
 	/**
