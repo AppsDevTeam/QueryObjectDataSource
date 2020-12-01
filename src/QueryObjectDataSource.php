@@ -209,10 +209,17 @@ class QueryObjectDataSource implements IDataSource {
 		} else {
 			
 			$sort = $sorting->getSort();
-	
+
 			if (!empty($sort) && ($this->queryObject instanceof IQueryObject)) {
+				$isFirst = true;
 				foreach ($sort as $column => $order) {
-					$this->queryObject->orderBy($column, $order);
+					if ($isFirst) {
+						$this->queryObject->orderBy($column, $order);
+					}
+					else {
+						$this->queryObject->addOrderBy($column, $order);
+					}
+					$isFirst = false;
 				}
 			}
 		} 
