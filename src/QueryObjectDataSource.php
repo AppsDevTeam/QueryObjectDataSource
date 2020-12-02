@@ -135,25 +135,22 @@ class QueryObjectDataSource implements IDataSource {
 	 * @param array $filters
 	 * @return static
 	 */
-	public function filter(array $filters): void {
-		foreach ($filters as $filter) {
-			if ($filter->isValueSet()) {
-				if ($filter->getConditionCallback()) {
-					call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
-				} else {
-					if ($this->queryObject instanceof IQueryObject) {
-						if ($filter instanceof FilterText) {
-							$this->queryObject->searchIn($filter->getKey(), $filter->getValue());
-						} else {
-							$this->queryObject->equalIn($filter->getKey(), $filter->getValue());
-						}
+	public function filter(array $filters): void
+	{
+		if (is_callable($this->filterCallback)) {
+			call_user_func($this->filterCallback, $this->queryObject, $filters);
+		}
+		else {
+			foreach ($filters as $filter) {
+				if ($filter->isValueSet()) {
+					if ($filter->getConditionCallback()) {
+						call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
+					}
+					elseif ($this->queryObject instanceof IQueryObject) {
+						$this->queryObject->searchIn($filter->getKey(), $filter->getValue(), !$filter instanceof FilterText);
 					}
 				}
 			}
-		}
-
-		if (is_callable($this->filterCallback)) {
-			call_user_func_array($this->filterCallback, [$this->queryObject, $filters]);
 		}
 	}
 
