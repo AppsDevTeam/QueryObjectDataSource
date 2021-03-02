@@ -118,6 +118,7 @@ class QueryObjectDataSource implements IDataSource {
 		if ($this->data) {
 			return $this->data;
 		}
+
 		return $this->getResultSet()->toArray();
 	}
 
@@ -140,15 +141,14 @@ class QueryObjectDataSource implements IDataSource {
 		if (is_callable($this->filterCallback)) {
 			call_user_func($this->filterCallback, $this->queryObject, $filters);
 		}
-		else {
-			foreach ($filters as $filter) {
-				if ($filter->isValueSet()) {
-					if ($filter->getConditionCallback()) {
-						call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
-					}
-					elseif ($this->queryObject instanceof IQueryObject) {
-						$this->queryObject->searchIn($filter->getKey(), $filter->getValue(), !$filter instanceof FilterText);
-					}
+
+		foreach ($filters as $filter) {
+			if ($filter->isValueSet()) {
+				if ($filter->getConditionCallback()) {
+					call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
+				}
+				elseif ($this->queryObject instanceof IQueryObject) {
+					$this->queryObject->searchIn($filter->getKey(), $filter->getValue(), !$filter instanceof FilterText);
 				}
 			}
 		}
