@@ -2,6 +2,7 @@
 
 namespace ADT\QueryObjectDataSource;
 
+use Ublaboo\DataGrid\Filter\Filter;
 use Ublaboo\DataGrid\Filter\FilterDate;
 use Ublaboo\DataGrid\Filter\FilterDateRange;
 use Ublaboo\DataGrid\Filter\FilterText;
@@ -142,12 +143,14 @@ class QueryObjectDataSource implements IDataSource {
 			call_user_func($this->filterCallback, $this->queryObject, $filters);
 		}
 
+		/** @var Filter $filter */
 		foreach ($filters as $filter) {
 			if ($filter->isValueSet()) {
+				bd ($filter);
 				if ($filter->getConditionCallback()) {
 					call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
 				}
-				elseif ($this->queryObject instanceof IQueryObject) {
+				elseif (!$filter instanceof FilterDateRange && $this->queryObject instanceof IQueryObject) {
 					$this->queryObject->searchIn($filter->getKey(), $filter->getValue(), !$filter instanceof FilterText);
 				}
 			}
