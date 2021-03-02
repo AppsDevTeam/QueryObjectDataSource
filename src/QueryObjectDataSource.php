@@ -146,7 +146,6 @@ class QueryObjectDataSource implements IDataSource {
 		/** @var Filter $filter */
 		foreach ($filters as $filter) {
 			if ($filter->isValueSet()) {
-				bd ($filter);
 				if ($filter->getConditionCallback()) {
 					call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
 				}
