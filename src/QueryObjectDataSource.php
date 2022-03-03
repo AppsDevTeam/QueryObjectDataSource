@@ -13,13 +13,13 @@ class QueryObjectDataSource implements IDataSource {
 
 	use \Nette\SmartObject;
 	
-	/** @var \Kdyby\Doctrine\ResultSet */
+	/** @var \ADT\BaseQuery\ResultSet */
 	protected $resultSet;
 
-	/** @var \Kdyby\Doctrine\EntityRepository */
+	/** @var \Doctrine\ORM\EntityRepository */
 	protected $repo;
 
-	/** @var \Kdyby\Doctrine\QueryObject|IQueryObject */
+	/** @var \ADT\BaseQuery\QueryObject|IQueryObject */
 	protected $queryObject;
 
 	/** @var callable */
@@ -39,11 +39,11 @@ class QueryObjectDataSource implements IDataSource {
 
 	/**
 	 * QueryObjectDataSource constructor.
-	 * @param \Kdyby\Doctrine\QueryObject $queryObject
-	 * @param \Kdyby\Doctrine\EntityRepository|null $repo
+	 * @param \ADT\BaseQuery\QueryObject $queryObject
+	 * @param \Doctrine\ORM\EntityRepository|null $repo
 	 * @throws \Exception
 	 */
-	public function __construct(\Kdyby\Doctrine\QueryObject $queryObject, \Kdyby\Doctrine\EntityRepository $repo = null)
+	public function __construct(\ADT\BaseQuery\QueryObject $queryObject, \Doctrine\ORM\EntityRepository $repo = null)
 	{
 		if (!$repo && (!$queryObject instanceof IQueryObject)) {
 			throw new \Exception('"repo" must be set or "queryObject" has to implement IQueryObject interface.');
