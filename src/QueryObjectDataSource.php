@@ -94,8 +94,7 @@ class QueryObjectDataSource implements IDataSource {
 
 	protected function getResultSet() {
 		if (!$this->resultSet) {
-			$this->resultSet = $this->repo
-				->fetch($this->queryObject);
+			$this->resultSet = $this->queryObject->fetch();
 		}
 
 		return $this->resultSet;
@@ -106,9 +105,7 @@ class QueryObjectDataSource implements IDataSource {
 	 * @return int
 	 */
 	public function getCount(): int {
-		return $this->repo
-			->fetch($this->queryObject)
-			->getTotalCount();
+		return $this->queryObject->fetch()->getTotalCount();
 	}
 
 	/**
