@@ -10,17 +10,15 @@ use Ublaboo\DataGrid\Filter\OneColumnFilter;
 use Ublaboo\DataGrid\Utils\DateTimeHelper;
 use Ublaboo\DataGrid\DataSource\IDataSource;
 
-class QueryObjectDataSource implements IDataSource {
-
-	use \Nette\SmartObject;
-	
-	/** @var \Kdyby\Doctrine\ResultSet */
+class QueryObjectDataSource implements IDataSource
+{
+	/** @var \ADT\DoctrineComponents\ResultSet */
 	protected $resultSet;
 
-	/** @var \Kdyby\Doctrine\EntityRepository */
+	/** @var \Doctrine\ORM\EntityRepository */
 	protected $repo;
 
-	/** @var \Kdyby\Doctrine\QueryObject|IQueryObject */
+	/** @var \ADT\DoctrineComponents\QueryObject|IQueryObject */
 	protected $queryObject;
 
 	/** @var callable */
@@ -40,11 +38,11 @@ class QueryObjectDataSource implements IDataSource {
 
 	/**
 	 * QueryObjectDataSource constructor.
-	 * @param \Kdyby\Doctrine\QueryObject $queryObject
-	 * @param \Kdyby\Doctrine\EntityRepository|null $repo
+	 * @param \ADT\DoctrineComponents\QueryObject $queryObject
+	 * @param \Doctrine\ORM\EntityRepository|null $repo
 	 * @throws \Exception
 	 */
-	public function __construct(\Kdyby\Doctrine\QueryObject $queryObject, \Kdyby\Doctrine\EntityRepository $repo = null)
+	public function __construct(\ADT\DoctrineComponents\QueryObject $queryObject, \Doctrine\ORM\EntityRepository $repo = null)
 	{
 		if (!$repo && (!$queryObject instanceof IQueryObject)) {
 			throw new \Exception('"repo" must be set or "queryObject" has to implement IQueryObject interface.');
@@ -95,8 +93,7 @@ class QueryObjectDataSource implements IDataSource {
 
 	protected function getResultSet() {
 		if (!$this->resultSet) {
-			$this->resultSet = $this->repo
-				->fetch($this->queryObject);
+			$this->resultSet = $this->queryObject->fetch();
 		}
 
 		return $this->resultSet;
@@ -107,9 +104,7 @@ class QueryObjectDataSource implements IDataSource {
 	 * @return int
 	 */
 	public function getCount(): int {
-		return $this->repo
-			->fetch($this->queryObject)
-			->getTotalCount();
+		return $this->queryObject->fetch()->getTotalCount();
 	}
 
 	/**
@@ -181,7 +176,7 @@ class QueryObjectDataSource implements IDataSource {
 	 * @param int $limit
 	 * @return static
 	 */
-	public function limit($offset, $limit): IDataSource {
+	public function limit(int $offset, int $limit): IDataSource {
 		$defaultCallback = function () use ($offset, $limit) {
 			$this->getResultSet()->applyPaging($offset, $limit);
 		};
