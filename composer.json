@@ -1,6 +1,6 @@
 {
 	"name": "adt/query-object-data-source",
-	"description": "Ublaboo Datagrid data source bindings for adt/doctrine-components query objects.",
+	"description": "Ublaboo Datagrid data source bindings for adt/base-query query objects.",
 	"type": "library",
 	"license": [
 		"MIT"
