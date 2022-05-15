@@ -9,17 +9,15 @@ use Ublaboo\DataGrid\Filter\FilterText;
 use Ublaboo\DataGrid\Utils\DateTimeHelper;
 use Ublaboo\DataGrid\DataSource\IDataSource;
 
-class QueryObjectDataSource implements IDataSource {
-
-	use \Nette\SmartObject;
-	
-	/** @var \ADT\BaseQuery\ResultSet */
+class QueryObjectDataSource implements IDataSource
+{
+	/** @var \ADT\DoctrineComponents\ResultSet */
 	protected $resultSet;
 
 	/** @var \Doctrine\ORM\EntityRepository */
 	protected $repo;
 
-	/** @var \ADT\BaseQuery\QueryObject|IQueryObject */
+	/** @var \ADT\DoctrineComponents\QueryObject|IQueryObject */
 	protected $queryObject;
 
 	/** @var callable */
@@ -39,11 +37,11 @@ class QueryObjectDataSource implements IDataSource {
 
 	/**
 	 * QueryObjectDataSource constructor.
-	 * @param \ADT\BaseQuery\QueryObject $queryObject
+	 * @param \ADT\DoctrineComponents\QueryObject $queryObject
 	 * @param \Doctrine\ORM\EntityRepository|null $repo
 	 * @throws \Exception
 	 */
-	public function __construct(\ADT\BaseQuery\QueryObject $queryObject, \Doctrine\ORM\EntityRepository $repo = null)
+	public function __construct(\ADT\DoctrineComponents\QueryObject $queryObject, \Doctrine\ORM\EntityRepository $repo = null)
 	{
 		if (!$repo && (!$queryObject instanceof IQueryObject)) {
 			throw new \Exception('"repo" must be set or "queryObject" has to implement IQueryObject interface.');
@@ -173,7 +171,7 @@ class QueryObjectDataSource implements IDataSource {
 	 * @param int $limit
 	 * @return static
 	 */
-	public function limit($offset, $limit): IDataSource {
+	public function limit(int $offset, int $limit): IDataSource {
 		$defaultCallback = function () use ($offset, $limit) {
 			$this->getResultSet()->applyPaging($offset, $limit);
 		};
