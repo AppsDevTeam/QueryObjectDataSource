@@ -136,7 +136,9 @@ class QueryObjectDataSource implements IDataSource
 	public function filter(array $filters): void
 	{
 		if (is_callable($this->filterCallback)) {
-			call_user_func($this->filterCallback, $this->queryObject, $filters);
+			call_user_func($this->filterCallback, $this->queryObject, array_filter($filters, function (Filter $_filter) {
+				return !$_filter->getConditionCallback();
+			}));
 		}
 
 		/** @var Filter $filter */
