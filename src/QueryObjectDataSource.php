@@ -91,9 +91,11 @@ class QueryObjectDataSource implements IDataSource
 		return $this;
 	}
 
-	protected function getResultSet() {
+	protected function getResultSet(int $page = 1, ?int $itemsPerPage = null) {
 		if (!$this->resultSet) {
-			$this->resultSet = $this->queryObject->fetch();
+			$this->resultSet = $itemsPerPage
+				? iterator_to_array($this->queryObject->getResultSet($page, $itemsPerPage)->getIterator())
+				: $this->queryObject->fetch();
 		}
 
 		return $this->resultSet;
@@ -104,7 +106,7 @@ class QueryObjectDataSource implements IDataSource
 	 * @return int
 	 */
 	public function getCount(): int {
-		return $this->queryObject->fetch()->getTotalCount();
+		return $this->queryObject->count();
 	}
 
 	/**
@@ -116,7 +118,7 @@ class QueryObjectDataSource implements IDataSource
 			return $this->data;
 		}
 
-		return $this->getResultSet()->toArray();
+		return $this->getResultSet();
 	}
 
 	/**
@@ -177,15 +179,12 @@ class QueryObjectDataSource implements IDataSource
 	 * @return static
 	 */
 	public function limit(int $offset, int $limit): IDataSource {
-		$defaultCallback = function () use ($offset, $limit) {
-			$this->getResultSet()->applyPaging($offset, $limit);
-		};
 
 		if (is_callable($this->limitCallback)) {
 			call_user_func_array($this->limitCallback, [$offset, $limit, $defaultCallback]);
 
 		} else {
-			$defaultCallback();
+			$this->getResultSet($offset / $limit + 1, $limit);
 		}
 
 		return $this;
