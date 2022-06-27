@@ -8,7 +8,7 @@ interface IQueryObject
 	
 	function addOrderBy(string $column, string $order = 'ASC');
 
-	function searchIn($column, $value, bool $strict = false);
+	function searchIn(array|string $column, mixed $value, bool $strict = false, ?string $joinType = 'innerJoin');
 	
 	function getEntityManager();
 }
