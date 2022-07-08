@@ -18,7 +18,7 @@ class QueryObjectDataSource implements IDataSource
 	/** @var \Doctrine\ORM\EntityRepository */
 	protected $repo;
 
-	/** @var \ADT\DoctrineComponents\QueryObject|IQueryObject */
+	/** @var \ADT\DoctrineComponents\QueryObject */
 	protected $queryObject;
 
 	/** @var callable */
@@ -39,15 +39,10 @@ class QueryObjectDataSource implements IDataSource
 	/**
 	 * QueryObjectDataSource constructor.
 	 * @param \ADT\DoctrineComponents\QueryObject $queryObject
-	 * @param \Doctrine\ORM\EntityRepository|null $repo
 	 * @throws \Exception
 	 */
-	public function __construct(\ADT\DoctrineComponents\QueryObject $queryObject, \Doctrine\ORM\EntityRepository $repo = null)
+	public function __construct(\ADT\DoctrineComponents\QueryObject $queryObject)
 	{
-		if (!$repo && (!$queryObject instanceof IQueryObject)) {
-			throw new \Exception('"repo" must be set or "queryObject" has to implement IQueryObject interface.');
-		}
-
 		$this->queryObject = $queryObject;
 		$this->repo = $repo ?: $queryObject->getEntityManager();
 	}
@@ -147,7 +142,7 @@ class QueryObjectDataSource implements IDataSource
 				if ($filter->getConditionCallback()) {
 					call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
 				}
-				elseif (!$filter instanceof FilterDateRange && $this->queryObject instanceof IQueryObject) {
+				elseif (!$filter instanceof FilterDateRange) {
 					$this->queryObject->searchIn(
 						$filter instanceof OneColumnFilter ? $filter->getColumn() : $filter->getKey(),
 						$filter->getValue(),
@@ -205,21 +200,7 @@ class QueryObjectDataSource implements IDataSource
 			);
 			
 		} else {
-			
-			$sort = $sorting->getSort();
-
-			if (!empty($sort) && ($this->queryObject instanceof IQueryObject)) {
-				$isFirst = true;
-				foreach ($sort as $column => $order) {
-					if ($isFirst) {
-						$this->queryObject->orderBy($column, $order);
-					}
-					else {
-						$this->queryObject->addOrderBy($column, $order);
-					}
-					$isFirst = false;
-				}
-			}
+			$this->queryObject->orderBy($sorting->getSort());
 		} 
 		
 		if (is_callable($this->sortCallback)) {
