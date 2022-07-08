@@ -15,9 +15,6 @@ class QueryObjectDataSource implements IDataSource
 	/** @var \ADT\DoctrineComponents\ResultSet */
 	protected $resultSet;
 
-	/** @var \Doctrine\ORM\EntityRepository */
-	protected $repo;
-
 	/** @var \ADT\DoctrineComponents\QueryObject */
 	protected $queryObject;
 
@@ -44,7 +41,6 @@ class QueryObjectDataSource implements IDataSource
 	public function __construct(\ADT\DoctrineComponents\QueryObject $queryObject)
 	{
 		$this->queryObject = $queryObject;
-		$this->repo = $repo ?: $queryObject->getEntityManager();
 	}
 
 	/**
