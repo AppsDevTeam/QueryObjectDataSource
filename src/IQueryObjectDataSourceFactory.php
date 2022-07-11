@@ -2,11 +2,9 @@
 
 namespace ADT\QueryObjectDataSource;
 
+use ADT\DoctrineComponents\QueryObject;
+
 interface IQueryObjectDataSourceFactory
 {
-	/**
-	 * @param \ADT\DoctrineComponents\QueryObject $queryObject
-	 * @return QueryObjectDataSource
-	 */
-	function create(\ADT\DoctrineComponents\QueryObject $queryObject);
+	public function create(QueryObject $queryObject): QueryObjectDataSource;
 }
