@@ -86,7 +86,7 @@ class QueryObjectDataSource implements IDataSource
 		if (!$this->resultSet) {
 			$this->resultSet = $itemsPerPage
 				? iterator_to_array($this->queryObject->getResultSet($page, $itemsPerPage)->getIterator())
-				: $this->queryObject->fetch();
+				: $this->queryObject->getQuery()->getResult();
 		}
 
 		return $this->resultSet;
@@ -194,11 +194,13 @@ class QueryObjectDataSource implements IDataSource
 				$this->queryObject,
 				array_values($sorting->getSort())[0]
 			);
-			
+
 		} else {
-			$this->queryObject->orderBy($sorting->getSort());
-		} 
-		
+			if (!empty($sorting->getSort())) {
+				$this->queryObject->orderBy($sorting->getSort());
+			}
+		}
+
 		if (is_callable($this->sortCallback)) {
 			call_user_func_array($this->sortCallback, [$this->queryObject, $sorting]);
 		}
