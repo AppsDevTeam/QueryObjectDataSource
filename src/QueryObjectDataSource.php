@@ -139,13 +139,12 @@ class QueryObjectDataSource implements IDataSource
 					call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
 				}
 				elseif ($filter instanceof FilterText) {
-					foreach ($filter->getCondition() as $by => $value) {
-						$this->queryObject->by(
-							$by,
-							$value,
-							false
-						);
-					}
+					$by = array_keys($filter->getCondition());
+					$value = $filter->getCondition()[$by[0]];
+					$this->queryObject->by(
+						$by,
+						$value,
+						false);
 				}
 				elseif (!$filter instanceof FilterDateRange) {
 					$this->queryObject->by(
