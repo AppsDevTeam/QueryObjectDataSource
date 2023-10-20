@@ -2,6 +2,7 @@
 
 namespace ADT\QueryObjectDataSource;
 
+use ADT\DoctrineComponents\QueryObjectByMode;
 use Ublaboo\DataGrid\Filter\Filter;
 use Ublaboo\DataGrid\Filter\FilterDate;
 use Ublaboo\DataGrid\Filter\FilterDateRange;
@@ -144,13 +145,13 @@ class QueryObjectDataSource implements IDataSource
 					$this->queryObject->by(
 						$by,
 						$value,
-						false);
+						QueryObjectByMode::CONTAINS);
 				}
 				elseif (!$filter instanceof FilterDateRange) {
 					$this->queryObject->by(
 						$filter instanceof OneColumnFilter ? $filter->getColumn() : $filter->getKey(),
 						$filter->getValue(),
-						true
+						QueryObjectByMode::STRICT
 					);
 				}
 			}
