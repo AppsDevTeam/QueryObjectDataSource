@@ -84,7 +84,7 @@ class QueryObjectDataSource implements IDataSource
 	}
 
 	protected function getResultSet(int $page = 1, ?int $itemsPerPage = null) {
-		if (!$this->resultSet) {
+		if ($this->resultSet === null) {
 			$this->resultSet = $itemsPerPage
 				? iterator_to_array($this->queryObject->getResultSet($page, $itemsPerPage)->getIterator())
 				: $this->queryObject->getQuery()->getResult();
