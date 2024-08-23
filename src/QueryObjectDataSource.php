@@ -87,7 +87,7 @@ class QueryObjectDataSource implements IDataSource
 		if ($this->resultSet === null) {
 			$this->resultSet = $itemsPerPage
 				? iterator_to_array($this->queryObject->getResultSet($page, $itemsPerPage)->getIterator())
-				: $this->queryObject->getQuery()->getResult();
+				: $this->queryObject->fetch();
 		}
 
 		return $this->resultSet;
