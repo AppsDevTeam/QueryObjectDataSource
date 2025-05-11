@@ -151,7 +151,7 @@ class QueryObjectDataSource implements IDataSource
 					$this->queryObject->by(
 						$filter instanceof OneColumnFilter ? $filter->getColumn() : $filter->getKey(),
 						$filter->getValue(),
-						QueryObjectByMode::STRICT
+						QueryObjectByMode::AUTO
 					);
 				}
 			}
