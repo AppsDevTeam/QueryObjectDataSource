@@ -150,8 +150,7 @@ class QueryObjectDataSource implements IDataSource
 				elseif (!$filter instanceof FilterDateRange) {
 					$this->queryObject->by(
 						$filter instanceof OneColumnFilter ? $filter->getColumn() : $filter->getKey(),
-						$filter->getValue(),
-						QueryObjectByMode::AUTO
+						$filter->getValue()
 					);
 				}
 			}
