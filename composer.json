@@ -1,4 +1,4 @@
-{
+gi{
 	"name": "adt/query-object-data-source",
 	"description": "Ublaboo Datagrid data source bindings for adt/base-query query objects.",
 	"type": "library",
@@ -8,7 +8,7 @@
 	"require": {
 		"php": ">=7.4",
 		"adt/doctrine-components": "^3.0",
-		"ublaboo/datagrid": "^7.0",
+		"ublaboo/datagrid": "^6.0 || ^7.0",
 		"nette/di": "^2.4|^3.0"
 	},
 	"autoload": {
