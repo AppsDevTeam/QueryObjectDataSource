@@ -1,4 +1,4 @@
-# Ublaboo Datagrid data source bindings for Kdyby Doctrine query objects
+# Ublaboo Datagrid data source bindings for Doctrine query objects
 
 ## Installation
 
