@@ -2,22 +2,27 @@
 
 namespace ADT\QueryObjectDataSource;
 
-use ADT\DoctrineComponents\QueryObjectByMode;
-use Ublaboo\DataGrid\Filter\Filter;
-use Ublaboo\DataGrid\Filter\FilterDate;
-use Ublaboo\DataGrid\Filter\FilterDateRange;
-use Ublaboo\DataGrid\Filter\FilterText;
-use Ublaboo\DataGrid\Filter\OneColumnFilter;
-use Ublaboo\DataGrid\Utils\DateTimeHelper;
-use Ublaboo\DataGrid\DataSource\IDataSource;
+use ADT\DoctrineComponents\QueryObject\QueryObject;
+use ADT\DoctrineComponents\QueryObject\QueryObjectByMode;
+use Contributte\Datagrid\DataSource\IDataSource;
+use Contributte\Datagrid\Exception\DatagridDateTimeHelperException;
+use DateTime;
+use Exception;
+use ReflectionException;
+use Contributte\Datagrid\Filter\Filter;
+use Contributte\DataGrid\Filter\FilterDate;
+use Contributte\DataGrid\Filter\FilterDateRange;
+use Contributte\DataGrid\Filter\FilterText;
+use Contributte\Datagrid\Filter\OneColumnFilter;
+use Contributte\Datagrid\Utils\DateTimeHelper;
+use Contributte\Datagrid\Utils\Sorting;
 
 class QueryObjectDataSource implements IDataSource
 {
-	/** @var \ADT\DoctrineComponents\ResultSet */
-	protected $resultSet;
+	protected ?array $resultSet = null;
 
-	/** @var \ADT\DoctrineComponents\QueryObject */
-	protected $queryObject;
+	/** @var QueryObject */
+	protected QueryObject $queryObject;
 
 	/** @var callable */
 	public $filterCallback;
@@ -31,42 +36,30 @@ class QueryObjectDataSource implements IDataSource
 	/** @var callable */
 	public $limitCallback;
 
-	/** @var array */
-	private $data;
+	private array $data = [];
 
 	/**
-	 * QueryObjectDataSource constructor.
-	 * @param \ADT\DoctrineComponents\QueryObject $queryObject
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function __construct(\ADT\DoctrineComponents\QueryObject $queryObject)
+	public function __construct(QueryObject $queryObject)
 	{
 		$this->queryObject = $queryObject;
 	}
 
-	/**
-	 * @param callable $callback
-	 * @return self
-	 */
-	public function setFilterCallback($callback) {
+	public function setFilterCallback(callable $callback): static
+	{
 		$this->filterCallback = $callback;
 		return $this;
 	}
 
-	/**
-	 * @param callable $callback
-	 * @return self
-	 */
-	public function setFilterOneCallback($callback) {
+	public function setFilterOneCallback(callable $callback): static
+	{
 		$this->filterOneCallback = $callback;
 		return $this;
 	}
 
-	/**
-	 * @param callable $callback
-	 * @return self
-	 */
-	public function setSortCallback($callback) {
+	public function setSortCallback(callable $callback): static
+	{
 		$this->sortCallback = $callback;
 		return $this;
 	}
@@ -78,12 +71,18 @@ class QueryObjectDataSource implements IDataSource
 	 * @param callable $callback Dostane parametry $offset, $limit, $defaultCallback
 	 * @return self
 	 */
-	public function setLimitCallback($callback) {
+	public function setLimitCallback(callable $callback): static
+	{
 		$this->limitCallback = $callback;
 		return $this;
 	}
 
-	protected function getResultSet(int $page = 1, ?int $itemsPerPage = null) {
+	/**
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	protected function getResultSet(int $page = 1, ?int $itemsPerPage = null): array
+	{
 		if ($this->resultSet === null) {
 			$this->resultSet = $itemsPerPage
 				? iterator_to_array($this->queryObject->getResultSet($page, $itemsPerPage)->getIterator())
@@ -96,16 +95,19 @@ class QueryObjectDataSource implements IDataSource
 	/**
 	 * Get count of data
 	 * @return int
+	 * @throws Exception
 	 */
-	public function getCount(): int {
+	public function getCount(): int
+	{
 		return $this->queryObject->count();
 	}
 
 	/**
 	 * Get the data
-	 * @return array
+	 * @throws ReflectionException
 	 */
-	public function getData(): array {
+	public function getData(): array
+	{
 		if ($this->data) {
 			return $this->data;
 		}
@@ -117,15 +119,14 @@ class QueryObjectDataSource implements IDataSource
 	 * Set the data
 	 * @return $this
 	 */
-	public function setData($data) {
+	public function setData($data): static
+	{
 		$this->data = $data;
 		return $this;
 	}
 
 	/**
 	 * Filter data
-	 * @param array $filters
-	 * @return static
 	 */
 	public function filter(array $filters): void
 	{
@@ -159,13 +160,11 @@ class QueryObjectDataSource implements IDataSource
 
 	/**
 	 * Filter data - get one row
-	 * @param array $filter
-	 * @return static
 	 */
-	public function filterOne(array $filter): IDataSource {
-
+	public function filterOne(array $condition): static
+	{
 		if (is_callable($this->filterOneCallback)) {
-			call_user_func_array($this->filterOneCallback, [$this->queryObject, $filter]);
+			call_user_func_array($this->filterOneCallback, [$this->queryObject, $condition]);
 		}
 
 		return $this;
@@ -176,11 +175,12 @@ class QueryObjectDataSource implements IDataSource
 	 * @param int $offset
 	 * @param int $limit
 	 * @return static
+	 * @throws ReflectionException
 	 */
-	public function limit(int $offset, int $limit): IDataSource {
-
+	public function limit(int $offset, int $limit): static
+	{
 		if (is_callable($this->limitCallback)) {
-			call_user_func_array($this->limitCallback, [$offset, $limit, $defaultCallback]);
+			call_user_func_array($this->limitCallback, [$offset, $limit]);
 
 		} else {
 			$this->getResultSet($offset / $limit + 1, $limit);
@@ -191,11 +191,9 @@ class QueryObjectDataSource implements IDataSource
 
 	/**
 	 * Sort data
-	 * @param \Ublaboo\DataGrid\Utils\Sorting $sorting
-	 * @return static
 	 */
-	public function sort(\Ublaboo\DataGrid\Utils\Sorting $sorting): IDataSource {
-
+	public function sort(Sorting $sorting): static
+	{
 		if (is_callable($sorting->getSortCallback())) {
 			call_user_func(
 				$sorting->getSortCallback(),
@@ -217,11 +215,10 @@ class QueryObjectDataSource implements IDataSource
 	}
 
 	/**
-	 * @param FilterDateRange $filter
-	 * @return array
+	 * @throws DatagridDateTimeHelperException
 	 */
-	public static function parseFilterDateRange(FilterDateRange $filter) {
-
+	public static function parseFilterDateRange(FilterDateRange $filter): array
+	{
 		$conditions = $filter->getCondition();
 
 		$value_from = $conditions[$filter->getColumn()]['from'];
@@ -248,19 +245,21 @@ class QueryObjectDataSource implements IDataSource
 	}
 
 	/**
-	 * @param FilterDate $filter
-	 * @return \DateTime|null
+	 * @throws DatagridDateTimeHelperException
 	 */
-	public static function parseFilterDate(FilterDate $filter) {
-		foreach ($filter->getCondition() as $column => $value) {
+	public static function parseFilterDate(FilterDate $filter): ?DateTime
+	{
+		foreach ($filter->getCondition() as $value) {
 			$date = DateTimeHelper::tryConvertToDateTime($value, [$filter->getPhpFormat()]);
 			$date->setTime(0, 0, 0);
 			return $date;
 		}
+
+		return null;
 	}
 
-	public function getQueryObject() {
+	public function getQueryObject(): QueryObject
+	{
 		return $this->queryObject;
 	}
-
 }

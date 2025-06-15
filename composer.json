@@ -6,7 +6,7 @@
 		"MIT"
 	],
 	"require": {
-		"php": ">=7.4",
+		"php": ">=8.0",
 		"adt/doctrine-components": "^3.0",
 		"ublaboo/datagrid": "^6.0|^7.0",
 		"nette/di": "^2.4|^3.0"
