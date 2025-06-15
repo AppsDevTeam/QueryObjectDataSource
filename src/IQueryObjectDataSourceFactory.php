@@ -2,7 +2,7 @@
 
 namespace ADT\QueryObjectDataSource;
 
-use ADT\DoctrineComponents\QueryObject;
+use ADT\DoctrineComponents\QueryObject\QueryObject;
 
 interface IQueryObjectDataSourceFactory
 {
