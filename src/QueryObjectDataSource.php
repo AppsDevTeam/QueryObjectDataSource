@@ -262,4 +262,9 @@ class QueryObjectDataSource implements IDataSource
 	{
 		return $this->queryObject;
 	}
+
+	public function __clone(): void
+	{
+		$this->queryObject = clone $this->queryObject;
+	}
 }
