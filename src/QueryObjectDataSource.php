@@ -2,8 +2,10 @@
 
 namespace ADT\QueryObjectDataSource;
 
+use ADT\Datagrid\Filter\FilterCheckbox;
 use ADT\DoctrineComponents\QueryObject\QueryObject;
 use ADT\DoctrineComponents\QueryObject\QueryObjectByMode;
+use ADT\Datagrid\Filter\FilterSwitcher;
 use Contributte\Datagrid\DataSource\IDataSource;
 use Contributte\Datagrid\Exception\DatagridDateTimeHelperException;
 use DateTime;
@@ -139,6 +141,12 @@ class QueryObjectDataSource implements IDataSource
 			if ($filter->isValueSet()) {
 				if ($filter->getConditionCallback()) {
 					call_user_func($filter->getConditionCallback(), $this->queryObject, $filter->getValue());
+				}
+				elseif ($filter instanceof FilterCheckbox || $filter instanceof FilterSwitcher) {
+					$this->queryObject->by(
+						$filter->getKey(),
+						$filter->getValue()
+					);
 				}
 				elseif ($filter instanceof FilterText) {
 					$by = array_keys($filter->getCondition());

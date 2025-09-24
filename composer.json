@@ -7,10 +7,18 @@
 	],
 	"require": {
 		"php": ">=8.0",
+		"adt/datagrid-components": "dev-main",
 		"adt/doctrine-components": "^3.0",
 		"ublaboo/datagrid": "^6.0|^7.0",
 		"nette/di": "^2.4|^3.0"
 	},
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/AppsDevTeam/datagrid-components",
+			"no-api": true
+		}
+	],
 	"autoload": {
 		"psr-4": {
 			"ADT\\QueryObjectDataSource\\": "src/"
